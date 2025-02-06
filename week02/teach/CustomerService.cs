@@ -11,10 +11,12 @@ public class CustomerService {
         // Test Cases
 
         // Test 1
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: Creating customer queue, and checking the size of the queue is valid. Creating queue size of 1 and trying to add another customer.
+        // Expected Result: The program should stop us from adding an additional customer over the limit.
         Console.WriteLine("Test 1");
-
+        var cs1 = new CustomerService(1);
+        cs1.AddNewCustomer();
+        cs1.AddNewCustomer();
         // Defect(s) Found: 
 
         Console.WriteLine("=================");

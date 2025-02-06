@@ -15,22 +15,36 @@ using Microsoft.VisualBasic.FileIO;
 
 public class Basketball
 {
-    public static void Run()
-    {
-        var players = new Dictionary<string, int>();
+   public static void Run()
+   {
+       var players = new Dictionary<string, int>();
+       
+       using var reader = new TextFieldParser("basketball.csv");
+       reader.TextFieldType = FieldType.Delimited;
+       reader.SetDelimiters(",");
+       reader.ReadFields(); // ignore header row
+       
+       while (!reader.EndOfData) {
+           var fields = reader.ReadFields()!;
+           var playerId = fields[0];
+           var points = int.Parse(fields[8]);
+           
+           if (players.ContainsKey(playerId))
+               players[playerId] += points;
+           else
+               players[playerId] = points;
+       }
 
-        using var reader = new TextFieldParser("basketball.csv");
-        reader.TextFieldType = FieldType.Delimited;
-        reader.SetDelimiters(",");
-        reader.ReadFields(); // ignore header row
-        while (!reader.EndOfData) {
-            var fields = reader.ReadFields()!;
-            var playerId = fields[0];
-            var points = int.Parse(fields[8]);
-        }
-
-        Console.WriteLine($"Players: {{{string.Join(", ", players)}}}");
-
-        var topPlayers = new string[10];
-    }
+       var playerArray = players.ToArray();
+       
+       Array.Sort(playerArray, (a, b) => b.Value.CompareTo(a.Value));
+       
+       Console.WriteLine("\nTop 10 Players by Career Points:");
+       Console.WriteLine("Player ID    Total Points");
+       
+       for (int i = 0; i < Math.Min(10, playerArray.Length); i++)
+       {
+           Console.WriteLine($"{playerArray[i].Key,-12} {playerArray[i].Value,8}");
+       }
+   }
 }

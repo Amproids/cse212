@@ -22,7 +22,25 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        HashSet<string> wordsSet = new HashSet<string>(words);
+        List<string> pairs = new List<string>();
+        HashSet<string> processedWords = new HashSet<string>();
+
+        foreach (string word in words)
+        {
+            if (processedWords.Contains(word))
+                continue;
+            if (word[0] == word[1])
+                continue;
+            string reverseWord = new string(new[] { word[1], word[0] });
+            if (wordsSet.Contains(reverseWord) && !processedWords.Contains(reverseWord))
+            {
+                pairs.Add(word + " & " + reverseWord);
+                processedWords.Add(word);
+                processedWords.Add(reverseWord);
+            }
+        }
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -43,6 +61,13 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            string degree = fields[3];
+            if (degrees.ContainsKey(degree))
+            {
+                degrees[degree] += 1;
+            } else {
+                degrees[degree] = 1;
+            }
         }
 
         return degrees;
@@ -67,7 +92,44 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        Dictionary<char, int> word1Count = new Dictionary<char, int>();
+        Dictionary<char, int> word2Count = new Dictionary<char, int>();
+        
+        for (int i = 0; i < word1.Length; i++)
+        {
+            if (word1[i] != ' ')
+            {
+                char letter = char.ToLower(word1[i]);
+                if (word1Count.ContainsKey(letter))
+                {
+                    word1Count[letter] += 1;
+                } else {
+                    word1Count[letter] = 1;
+                }
+            }
+        }
+        for (int i = 0; i < word2.Length; i++)
+        {
+            if (word2[i] != ' ')
+            {
+                char letter = char.ToLower(word2[i]);
+                if (word2Count.ContainsKey(letter))
+                {
+                    word2Count[letter] += 1;
+                } else {
+                    word2Count[letter] = 1;
+                }
+            }
+        }
+        foreach (char letter in word1Count.Keys)
+        {
+            if (!word2Count.ContainsKey(letter) || 
+                word1Count[letter] != word2Count[letter])
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /// <summary>
