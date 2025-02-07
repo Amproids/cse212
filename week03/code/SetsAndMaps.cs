@@ -91,44 +91,56 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        Dictionary<char, int> word1Count = new Dictionary<char, int>();
-        Dictionary<char, int> word2Count = new Dictionary<char, int>();
+        int[] charCount = new int[26];
+        int len1 = word1.Length;
+        int len2 = word2.Length;
         
-        for (int i = 0; i < word1.Length; i++)
+        // Process up to the shorter length
+        int minLen = len1 < len2 ? len1 : len2;
+        int i;
+        
+
+        for (i = 0; i < minLen; i++)
         {
-            if (word1[i] != ' ')
+            //Convert to lowercase using bitwise operation
+            //Add count to integer using bitwise operation to convert char to index 'a' - 'a' = 0, 'b' - 'a' = 1...
+            int char1 = word1[i] | 32;
+            if (char1 >= 'a' && char1 <= 'z')
+                charCount[char1 - 'a']++;
+                
+            int char2 = word2[i] | 32;
+            if (char2 >= 'a' && char2 <= 'z')
+                charCount[char2 - 'a']--;
+        }
+        
+        // Process remaining characters in word1 if it's longer
+        if (len1 > len2)
+        {
+            for (; i < len1; i++)
             {
-                char letter = char.ToLower(word1[i]);
-                if (word1Count.ContainsKey(letter))
-                {
-                    word1Count[letter] += 1;
-                } else {
-                    word1Count[letter] = 1;
-                }
+                int char1 = word1[i] | 32;
+                if (char1 >= 'a' && char1 <= 'z')
+                    charCount[char1 - 'a']++;
             }
         }
-        for (int i = 0; i < word2.Length; i++)
+        // Process remaining characters in word2 if it's longer
+        else if (len2 > len1)
         {
-            if (word2[i] != ' ')
+            for (; i < len2; i++)
             {
-                char letter = char.ToLower(word2[i]);
-                if (word2Count.ContainsKey(letter))
-                {
-                    word2Count[letter] += 1;
-                } else {
-                    word2Count[letter] = 1;
-                }
+                int char2 = word2[i] | 32;
+                if (char2 >= 'a' && char2 <= 'z')
+                    charCount[char2 - 'a']--;
             }
         }
-        foreach (char letter in word1Count.Keys)
+
+        // Verify counts are zero
+        for (i = 0; i < 26; i++)
         {
-            if (!word2Count.ContainsKey(letter) || 
-                word1Count[letter] != word2Count[letter])
-            {
+            if (charCount[i] != 0)
                 return false;
-            }
         }
+
         return true;
     }
 
@@ -163,6 +175,9 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+
+        return featureCollection.Features
+        .Select(f => $"{f.Properties.Place} - Mag {f.Properties.Magnitude:F1}")
+        .ToArray();
     }
 }
