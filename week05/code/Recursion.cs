@@ -15,6 +15,14 @@ public static class Recursion
     public static int SumSquaresRecursive(int n)
     {
         // TODO Start Problem 1
+        if (n <= 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return n * n + SumSquaresRecursive(n - 1);
+        }
         return 0;
     }
 
@@ -40,6 +48,23 @@ public static class Recursion
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
         // TODO Start Problem 2
+        // Base case: if we've built a word of the desired size
+        if (word.Length == size)
+        {
+            results.Add(word);
+            return;
+        }
+
+        // Try each letter as the next character
+        for (int i = 0; i < letters.Length; i++)
+        {
+            // Skip this letter if it's already used in our current word
+            if (word.Contains(letters[i]))
+                continue;
+                
+            // Add the letter and recursively find permutations
+            PermutationsChoose(results, letters, size, word + letters[i]);
+        }
     }
 
     /// <summary>
@@ -98,8 +123,20 @@ public static class Recursion
 
         // TODO Start Problem 3
 
+        // Initialize the memoization dictionary if it's null
+        if (remember == null)
+            remember = new Dictionary<int, decimal>();
+            
+        // Check if we already calculated this value
+        if (remember.ContainsKey(s))
+            return remember[s];
+
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        decimal ways =  CountWaysToClimb(s - 1, remember) + 
+                        CountWaysToClimb(s - 2, remember) + 
+                        CountWaysToClimb(s - 3, remember);
+        
+        remember[s] = ways;
         return ways;
     }
 
@@ -119,6 +156,23 @@ public static class Recursion
     public static void WildcardBinary(string pattern, List<string> results)
     {
         // TODO Start Problem 4
+        if (!pattern.Contains("*")) 
+        {
+            //patter has no wildcards, it is complete.
+            results.Add(pattern);
+            return;
+        }
+
+        // Find the index of the first wildcard
+        int wildcardIndex = pattern.IndexOf("*");
+
+        //divide the string on either side of the wildcard
+        string left = pattern.Substring(0, wildcardIndex);
+        string right = pattern.Substring(wildcardIndex + 1);
+
+        //call funciton again with wildcard replaced with bot possible solutions.
+        WildcardBinary(left + "0" + right, results);
+        WildcardBinary(left + "1" + right, results);
     }
 
     /// <summary>
@@ -137,6 +191,30 @@ public static class Recursion
 
         // TODO Start Problem 5
         // ADD CODE HERE
+
+        // Add current position to path
+        currPath.Add((x, y));
+
+        // Base case: If we've reached the end square
+        if (maze.IsEnd(x, y))
+        {
+            results.Add(currPath.AsString());
+            currPath.RemoveAt(currPath.Count - 1); // Backtrack
+            return;
+        }
+    
+        // Recursive case: Try each valid move (right, down, left, up)
+        if (maze.IsValidMove(currPath, x + 1, y) && !currPath.Contains((x + 1, y)))
+            SolveMaze(results, maze, x + 1, y, currPath);
+        if (maze.IsValidMove(currPath, x, y + 1) && !currPath.Contains((x, y + 1)))
+            SolveMaze(results, maze, x, y + 1, currPath);
+        if (maze.IsValidMove(currPath, x - 1, y) && !currPath.Contains((x - 1, y)))
+            SolveMaze(results, maze, x - 1, y, currPath);
+        if (maze.IsValidMove(currPath, x, y - 1) && !currPath.Contains((x, y - 1)))
+            SolveMaze(results, maze, x, y - 1, currPath);
+
+        // Backtrack by removing current position from path
+        currPath.RemoveAt(currPath.Count - 1);
 
         // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
     }
