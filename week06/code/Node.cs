@@ -12,7 +12,11 @@ public class Node
     public void Insert(int value)
     {
         // TODO Start Problem 1
-
+        // If value equals current node's data, don't insert (maintain uniqueness)
+        if (value == Data)
+        {
+            return;
+        }
         if (value < Data)
         {
             // Insert to the left
@@ -34,12 +38,32 @@ public class Node
     public bool Contains(int value)
     {
         // TODO Start Problem 2
-        return false;
+        if (value == Data)
+        {
+            return true;
+        }
+        
+        //This is our recurssion
+        // If value is less than current node, search left subtree
+        else if (value < Data)
+        {
+            return Left != null && Left.Contains(value);
+        }
+        // If value is greater than current node, search right subtree
+        else
+        {
+            return Right != null && Right.Contains(value);
+        }
     }
 
     public int GetHeight()
     {
-        // TODO Start Problem 4
-        return 0; // Replace this line with the correct return statement(s)
+        // Get heights of left and right subtrees
+        int leftHeight = Left?.GetHeight() ?? 0;
+        int rightHeight = Right?.GetHeight() ?? 0;
+        
+        // Return the larger height plus 1
+        //It will unconditionally go up because if branch doesn't exist, it will return 0
+        return Math.Max(leftHeight, rightHeight) + 1;
     }
 }
